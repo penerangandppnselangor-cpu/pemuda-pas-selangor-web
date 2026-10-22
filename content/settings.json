@@ -1,0 +1,119 @@
+{
+  "site": {
+    "name": "Pemuda PAS Selangor",
+    "fullName": "Dewan Pemuda PAS Negeri Selangor",
+    "tagline": "Berkhidmat untuk anak muda Selangor",
+    "description": "Laman rasmi Dewan Pemuda PAS Negeri Selangor. Berita, program, aktiviti dan kenyataan terkini Pemuda PAS Selangor.",
+    "url": "",
+    "logo": "",
+    "favicon": "/favicon.svg",
+    "ogImage": "/og-default.png"
+  },
+  "contact": {
+    "whatsapp": "60182596954",
+    "whatsappDisplay": "+60 18-259 6954",
+    "whatsappMessage": "Assalamualaikum Pemuda PAS Selangor, saya ingin bertanya tentang",
+    "whatsappButton": true,
+    "email": "",
+    "phone": "",
+    "address": "Selangor Darul Ehsan, Malaysia",
+    "mapUrl": "",
+    "officeHours": "Isnin – Jumaat, 9.00 pagi – 5.00 petang"
+  },
+  "social": {
+    "facebook": "",
+    "instagram": "",
+    "tiktok": "",
+    "youtube": "",
+    "x": "",
+    "telegram": ""
+  },
+  "theme": {
+    "preset": "hijau-daun",
+    "primary": "#0E5A3F",
+    "primaryDark": "#083826",
+    "accent": "#E8B53A",
+    "background": "#F6F8F6",
+    "surface": "#FFFFFF",
+    "text": "#14211B",
+    "muted": "#5A6A62",
+    "font": "sora-figtree",
+    "radius": 10,
+    "headerStyle": "light",
+    "heroPattern": true
+  },
+  "nav": [
+    { "label": "Utama", "href": "/" },
+    { "label": "Berita", "href": "/berita/" },
+    { "label": "Program", "href": "/program/" },
+    { "label": "Tentang Kami", "href": "/tentang/" },
+    { "label": "Hubungi", "href": "/hubungi/" }
+  ],
+  "home": {
+    "sections": [
+      { "id": "hero", "enabled": true },
+      { "id": "latest", "enabled": true },
+      { "id": "programmes", "enabled": true },
+      { "id": "stats", "enabled": false },
+      { "id": "activities", "enabled": true },
+      { "id": "cta", "enabled": true }
+    ],
+    "hero": {
+      "title": "Berkhidmat untuk anak muda Selangor",
+      "subtitle": "Ikuti program, aktiviti dan kenyataan terkini Dewan Pemuda PAS Negeri Selangor, dan sertai gerak kerja kami di kawasan anda.",
+      "primaryLabel": "Baca berita terkini",
+      "primaryHref": "/berita/",
+      "secondaryLabel": "Sertai kami",
+      "secondaryHref": "whatsapp",
+      "showFeatured": true
+    },
+    "latestTitle": "Berita terkini",
+    "latestCount": 7,
+    "programmesTitle": "Program teras",
+    "programmesIntro": "Gerak kerja Pemuda PAS Selangor tersusun dalam beberapa bidang utama. Pilih bidang untuk melihat laporan program berkaitan.",
+    "statsTitle": "Pemuda PAS Selangor dalam angka",
+    "stats": [
+      { "value": "", "label": "Kawasan" },
+      { "value": "", "label": "Program setahun" },
+      { "value": "", "label": "Ahli aktif" },
+      { "value": "", "label": "Sukarelawan" }
+    ],
+    "activitiesTitle": "Aktiviti di lapangan",
+    "activitiesCategory": "Aktiviti",
+    "ctaTitle": "Ada soalan atau ingin menyertai program?",
+    "ctaText": "Hubungi sekretariat Pemuda PAS Selangor terus melalui WhatsApp. Kami akan membantu anda berhubung dengan pimpinan kawasan terdekat."
+  },
+  "programmes": [
+    { "title": "Tarbiah & Pendidikan", "description": "Usrah, kuliah, kursus kepimpinan dan pembangunan diri untuk anak muda.", "icon": "book", "category": "Pendidikan" },
+    { "title": "Kebajikan & Bantuan", "description": "Bantuan bencana, ziarah asnaf dan sokongan kepada keluarga yang memerlukan.", "icon": "heart", "category": "Kebajikan" },
+    { "title": "Sukarelawan & Komuniti", "description": "Gotong-royong, khidmat masyarakat dan program bersama penduduk setempat.", "icon": "hands", "category": "Aktiviti" },
+    { "title": "Sukan & Rekreasi", "description": "Kejohanan, riadah dan aktiviti lasak yang merapatkan ukhuwah anak muda.", "icon": "ball", "category": "Sukan" },
+    { "title": "Siasah & Advokasi", "description": "Kenyataan media, forum isu semasa dan suara anak muda dalam dasar awam.", "icon": "mic", "category": "Kenyataan Media" },
+    { "title": "Digital & Media", "description": "Kandungan, latihan media baharu dan penyampaian maklumat yang tepat.", "icon": "screen", "category": "Media" }
+  ],
+  "categories": ["Berita", "Program", "Aktiviti", "Kenyataan Media", "Kebajikan", "Pendidikan", "Sukan", "Media"],
+  "footer": {
+    "about": "Dewan Pemuda PAS Negeri Selangor menggerakkan anak muda melalui tarbiah, khidmat masyarakat dan penglibatan dalam isu semasa.",
+    "copyright": "Dewan Pemuda PAS Negeri Selangor"
+  },
+  "listing": {
+    "postsPerPage": 12,
+    "showSampleBadge": true
+  },
+  "ai": {
+    "model": "claude-haiku-5-5",
+    "tone": "Laporan berita rasmi dan profesional dalam Bahasa Melayu standard, gaya kenyataan media organisasi.",
+    "instructions": "Kekalkan semua fakta, nama, tarikh dan tempat seperti dalam posting asal. Jangan reka maklumat baharu. Gunakan perenggan pendek supaya mudah dibaca di telefon.",
+    "defaultCategory": "Berita"
+  },
+  "facebook": {
+    "pageUrl": "",
+    "pageId": "",
+    "limit": 10,
+    "graphVersion": "v26.0"
+  },
+  "deploy": {
+    "githubRepo": "",
+    "branch": "main"
+  }
+}

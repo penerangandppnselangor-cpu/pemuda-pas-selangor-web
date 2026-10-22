@@ -1,0 +1,12 @@
+{
+  "name": "pemuda-pas-selangor",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Laman web rasmi Dewan Pemuda PAS Negeri Selangor",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/build.mjs && node scripts/serve.mjs"
+  },
+  "engines": { "node": ">=20" }
+}
