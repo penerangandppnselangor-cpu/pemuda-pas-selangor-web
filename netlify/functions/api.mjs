@@ -14,6 +14,13 @@ const RESERVED = new Set(['berita', 'kategori', 'carian', 'admin', 'api', 'asset
 const POST_FIELDS = ['title', 'date', 'updated', 'category', 'excerpt', 'cover', 'coverAlt', 'gallery', 'tags', 'author', 'featured', 'draft', 'sample', 'source', 'fbId', 'fbUrl'];
 const PAGE_FIELDS = ['title', 'description', 'template', 'draft'];
 
+// Petunjuk bentuk token tanpa mendedahkannya (jenis & panjang sahaja)
+function tokenHint(t = '') {
+  if (!t) return '';
+  const type = t.startsWith('github_pat_') ? 'fine-grained (github_pat_…)' : t.startsWith('ghp_') ? 'classic (ghp_…)' : /^gh[osur]_/.test(t) ? 'token aplikasi/OAuth' : 'format tidak dikenali';
+  return `${type}, ${t.length} aksara`;
+}
+
 async function getSettings() {
   const t = await readFile(SETTINGS);
   if (!t) throw new HttpError(500, 'content/settings.json tidak dijumpai dalam repo.');
@@ -147,7 +154,7 @@ async function route(req, parts) {
     let commit = null, githubError = null;
     if (r.ready) { try { commit = await lastCommit(); } catch (e) { githubError = e.message; } }
     return {
-      github: { ready: r.ready && !githubError, repo: r.full, branch: r.branch, hasToken: Boolean(r.token), error: githubError },
+      github: { ready: r.ready && !githubError, repo: r.full, branch: r.branch, hasToken: Boolean(r.token), error: githubError, tokenHint: tokenHint(r.token) },
       facebook: { ready: Boolean(env('FB_PAGE_TOKEN')), pageId: env('FB_PAGE_ID') },
       ai: { ready: aiReady(), model: env('ANTHROPIC_MODEL') },
       lastCommit: commit,

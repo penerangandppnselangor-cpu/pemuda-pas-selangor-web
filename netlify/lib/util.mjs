@@ -8,13 +8,32 @@ export class HttpError extends Error {
   }
 }
 
-export const env = (k, d = '') => {
+const rawEnv = (k) => {
   try {
     // eslint-disable-next-line no-undef
     const v = typeof Netlify !== 'undefined' && Netlify.env?.get ? Netlify.env.get(k) : undefined;
     if (v) return v;
   } catch {}
-  return process.env[k] || d;
+  return process.env[k] || '';
+};
+
+// Token/kunci API tidak pernah mengandungi ruang, petikan atau tanda baca di hujung.
+// Buang aksara yang sering ikut tersalin semasa tampal (ruang, titik, koma, petikan, "Bearer ").
+const TOKEN_KEYS = /(_TOKEN|_API_KEY)$/;
+const cleanToken = (v) =>
+  String(v)
+    .replace(/[​-‍﻿]/g, '')
+    .trim()
+    .replace(/^(?:Bearer|token)\s+/i, '')
+    .replace(/^["'`]+|["'`]+$/g, '')
+    .replace(/[\s.,;:'"`]+$/g, '')
+    .trim();
+
+export const env = (k, d = '') => {
+  const v = rawEnv(k);
+  if (!v) return d;
+  if (TOKEN_KEYS.test(k)) return cleanToken(v);
+  return k === 'ADMIN_PASSWORD' ? v : String(v).trim();
 };
 
 export const json = (data, status = 200) =>
