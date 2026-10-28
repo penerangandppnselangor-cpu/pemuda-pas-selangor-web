@@ -239,6 +239,8 @@ async function viewDashboard(v) {
     const pub = p.filter((x) => !x.draft).length, dr = p.filter((x) => x.draft).length, fb = p.filter((x) => x.fbId).length, sm = p.filter((x) => x.sample);
     $('#stats').innerHTML = [[pub, 'Artikel diterbitkan'], [dr, 'Draf'], [fb, 'Dari Facebook'], [p.length, 'Jumlah artikel']]
       .map(([n, l]) => `<div class="card stat"><b>${n}</b><span>${l}</span></div>`).join('');
+    const fbDrafts = p.filter((x) => x.draft && x.fbId);
+    if (fbDrafts.length) $('#samples').insertAdjacentHTML('beforebegin', `<div class="note info" style="margin-top:14px"><b>${fbDrafts.length} draf daripada Facebook</b> menunggu semakan. <a href="#/artikel">Semak & terbitkan</a></div>`);
     if (sm.length) {
       $('#samples').innerHTML = `<div class="note" style="margin-top:14px">${sm.length} artikel contoh masih dipaparkan di laman. <button class="btn sm" id="delSamples" style="margin-left:6px">${I.trash} Padam artikel contoh</button></div>`;
       $('#delSamples').onclick = async (e) => {
@@ -510,7 +512,8 @@ async function viewArticles(v, a) {
 async function viewFacebook(v, a) {
   await loadSettings();
   v.innerHTML = `<div class="page-title"><div><h1>Import dari Facebook</h1><p>Tarik hantaran terkini Halaman Facebook rasmi, kemudian terbitkan sebagai artikel berita.</p></div>
-    <div class="actions"><button class="btn" id="manual">${I.edit} Tampal hantaran secara manual</button></div></div>
+    <div class="actions"><button class="btn" id="autorun" title="Jalankan import automatik sekarang">${I.spark} Import automatik sekarang</button><button class="btn" id="manual">${I.edit} Tampal hantaran secara manual</button></div></div>
+  <div class="note info" style="margin-bottom:14px">Import automatik: <b>${{ draft: 'aktif — hantaran baharu disimpan sebagai draf setiap jam', publish: 'aktif — hantaran baharu terus diterbitkan setiap jam', off: 'dimatikan' }[store.settings.facebook?.autoImport || 'draft']}</b>. <a href="#/tetapan/ai">Tukar</a></div>
   <div class="hero-cta"><div><h2>Tarik ${store.settings.facebook?.limit || 10} posting terkini</h2><p>Teks, tajuk, gambar dan pautan akan diambil. AI menyusunnya menjadi laporan berita untuk anda semak.</p></div>
   <button class="btn accent big" id="pull">${I.refresh} Tarik sekarang</button></div>
   <div id="fbmsg"></div><div id="fbbar"></div><div class="fb-grid" id="fbgrid"></div>`;
@@ -608,6 +611,20 @@ async function viewFacebook(v, a) {
   };
 
   $('#pull', v).onclick = (e) => pull(e.currentTarget);
+  $('#autorun', v).onclick = async (e) => {
+    busy(e.currentTarget, true, 'Mengimport…');
+    try {
+      const r = await api('facebook/auto-run', { method: 'POST' });
+      store.posts = null;
+      const made = r.created || [];
+      const msg = made.length
+        ? `${made.length} artikel ${made[0].draft ? 'disimpan sebagai draf' : 'diterbitkan'}: ${made.map((x) => esc(x.title)).join('; ')}.${r.pending ? ` ${r.pending} lagi akan diproses pada larian seterusnya.` : ''} <a href="#/artikel">Lihat artikel</a>`
+        : esc(r.message || r.reason || 'Tiada hantaran baharu.');
+      toast(msg, { html: true, ms: 10000 });
+      (r.errors || []).forEach((x) => toast(x, { error: true, ms: 9000 }));
+    } catch (err) { toast(err.message, { error: true }); }
+    finally { busy(e.currentTarget, false); }
+  };
   $('#manual', v).onclick = () => openDialog('Tampal hantaran Facebook', (host, done) => {
     host.innerHTML = `<p class="muted">Salin teks hantaran dari Facebook dan tampal di bawah. Tambah gambar dari peranti anda jika perlu.</p>
       <div class="field"><label for="m-text">Teks hantaran</label><textarea id="m-text" rows="10"></textarea></div>
@@ -873,6 +890,11 @@ async function viewSettings(v, tabArg) {
       </div><div class="card"><h2>Facebook</h2>
         ${f('facebook.pageUrl', 'Pautan Halaman Facebook', { type: 'url', ph: 'https://www.facebook.com/…' })}
         ${f('facebook.pageId', 'ID Halaman (pilihan)', { hint: 'Kosongkan jika guna Page Access Token — halaman dikesan automatik.' })}
+        <div class="field"><label>Import automatik (setiap jam)</label><select data-k="facebook.autoImport">
+          <option value="draft"${(S.facebook.autoImport || 'draft') === 'draft' ? ' selected' : ''}>Ya — simpan sebagai draf untuk disemak (disyorkan)</option>
+          <option value="publish"${S.facebook.autoImport === 'publish' ? ' selected' : ''}>Ya — terus terbitkan tanpa semakan</option>
+          <option value="off"${S.facebook.autoImport === 'off' ? ' selected' : ''}>Tidak — hanya bila butang ditekan</option>
+        </select><span class="hint">Setiap jam laman menyemak hantaran baharu di Halaman Facebook dan menjadikannya artikel secara automatik.</span></div>
         ${f('facebook.limit', 'Bilangan hantaran ditarik', { type: 'number' })}
         ${f('facebook.graphVersion', 'Versi Graph API', { ph: 'v26.0' })}
         <p class="small muted">Token rahsia (FB_PAGE_TOKEN, ANTHROPIC_API_KEY) disimpan sebagai pemboleh ubah persekitaran Netlify, bukan di sini. Lihat <a href="#/bantuan">Bantuan</a>.</p>
