@@ -44,7 +44,7 @@ async function route(req, parts) {
     return { token: issueToken(12) };
   }
 
-  if (a === 'health') return { ok: true, admin: Boolean(env('ADMIN_PASSWORD')) };
+  if (a === 'health') return { ok: true, admin: Boolean(env('ADMIN_PASSWORD')), ai: aiSource() || 'tiada', facebook: Boolean(env('FB_PAGE_TOKEN')) };
 
   requireAuth(req);
 
