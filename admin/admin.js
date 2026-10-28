@@ -229,7 +229,7 @@ async function viewDashboard(v) {
     $('#conn').innerHTML = `<h2>Sambungan</h2>
       ${row(s.github.ready, 'Penyimpanan (GitHub)', `Disambung ke ${esc(s.github.repo)} (${esc(s.github.branch)})`, esc(s.github.error || 'Belum disambung — perubahan tidak boleh disimpan.') + (s.github.tokenHint ? `<br>Token dikesan: ${esc(s.github.tokenHint)}. Token fine-grained biasanya 93 aksara; classic 40 aksara.` : ''))}
       ${row(s.facebook.ready, 'Facebook', 'Token Halaman tersedia', 'Belum disambung — butang tarik posting belum berfungsi.')}
-      ${row(s.ai.ready, 'AI penulis artikel', 'Kunci Anthropic tersedia', 'Belum disambung — draf akan disediakan tanpa AI.')}
+      ${row(s.ai.ready, 'AI penulis artikel', `Aktif melalui ${esc(s.ai.source || 'Anthropic')}`, 'Belum aktif — draf akan disediakan tanpa AI.')}
       ${!(s.github.ready && s.facebook.ready && s.ai.ready) ? '<a class="btn sm" href="#/bantuan">Lengkapkan sambungan</a>' : ''}`;
     if (s.lastCommit) $('#last').innerHTML = `Kemas kini terakhir: ${esc((s.lastCommit.message || '').split('\n')[0])} · ${fmtDate(s.lastCommit.date)} · <a href="${s.lastCommit.url}" target="_blank" rel="noopener">GitHub</a>`;
   } else $('#conn').innerHTML = `<h2>Sambungan</h2><div class="note err">${esc(status.reason.message)}</div>`;

@@ -2,7 +2,7 @@
 import { json, HttpError, requireAuth, checkPassword, issueToken, sleep, env } from '../lib/util.mjs';
 import { readFile, readDirTexts, commitFiles, repoInfo, lastCommit } from '../lib/github.mjs';
 import { fetchLatestPosts } from '../lib/facebook.mjs';
-import { articleFromFacebook, aiReady } from '../lib/ai.mjs';
+import { articleFromFacebook, aiReady, aiSource } from '../lib/ai.mjs';
 import { parseDoc, stringifyDoc, slugify } from '../../src/frontmatter.js';
 
 export const config = { path: '/api/*' };
@@ -156,7 +156,7 @@ async function route(req, parts) {
     return {
       github: { ready: r.ready && !githubError, repo: r.full, branch: r.branch, hasToken: Boolean(r.token), error: githubError, tokenHint: tokenHint(r.token) },
       facebook: { ready: Boolean(env('FB_PAGE_TOKEN')), pageId: env('FB_PAGE_ID') },
-      ai: { ready: aiReady(), model: env('ANTHROPIC_MODEL') },
+      ai: { ready: aiReady(), model: env('ANTHROPIC_MODEL'), source: aiSource() },
       lastCommit: commit,
       siteUrl: env('URL'),
     };

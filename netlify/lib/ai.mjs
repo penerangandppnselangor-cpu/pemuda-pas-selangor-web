@@ -13,12 +13,20 @@ export function aiReady() {
   return Boolean(env('ANTHROPIC_API_KEY'));
 }
 
+// Netlify AI Gateway menyuntik ANTHROPIC_API_KEY & ANTHROPIC_BASE_URL secara automatik
+// (tiada akaun Anthropic diperlukan). Jika kunci sendiri ditetapkan, ia digunakan terus.
+export function aiSource() {
+  if (!env('ANTHROPIC_API_KEY')) return '';
+  return env('ANTHROPIC_BASE_URL') ? 'Netlify AI Gateway' : 'kunci Anthropic sendiri';
+}
+const messagesUrl = () => `${(env('ANTHROPIC_BASE_URL') || 'https://api.anthropic.com').replace(/\/+$/, '')}/v1/messages`;
+
 export async function articleFromFacebook(fb, settings) {
   const categories = settings.categories || [];
   const defaultCategory = settings.ai?.defaultCategory || 'Berita';
   const basic = basicArticle(fb, { categories, defaultCategory });
   const key = env('ANTHROPIC_API_KEY');
-  if (!key) return { ...basic, engine: 'asas', note: 'ANTHROPIC_API_KEY belum ditetapkan — draf disediakan tanpa AI.' };
+  if (!key) return { ...basic, engine: 'asas', note: 'AI belum aktif (Netlify AI Gateway atau ANTHROPIC_API_KEY tiada) — draf disediakan tanpa AI.' };
   if (!fb.message || fb.message.replace(/\s/g, '').length < 15) return { ...basic, engine: 'asas', note: 'Hantaran terlalu pendek untuk diolah AI.' };
 
   const site = settings.site || {};
@@ -59,7 +67,7 @@ Pulangkan JSON dengan medan:
   const timeout = Number(env('AI_TIMEOUT_MS', '9500'));
   let res;
   try {
-    res = await fetch('https://api.anthropic.com/v1/messages', {
+    res = await fetch(messagesUrl(), {
       method: 'POST',
       headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
       body: JSON.stringify({ model, max_tokens: 1800, system, messages: [{ role: 'user', content }] }),
@@ -71,7 +79,8 @@ Pulangkan JSON dengan medan:
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     const msg = data?.error?.message || res.status;
-    if (res.status === 401) throw new HttpError(400, 'ANTHROPIC_API_KEY tidak sah. Semak semula kunci di Netlify.');
+    if (res.status === 401) throw new HttpError(400, env('ANTHROPIC_BASE_URL') ? 'Netlify AI Gateway menolak permintaan (401). Pastikan ciri AI tidak dimatikan untuk pasukan Netlify ini.' : 'ANTHROPIC_API_KEY tidak sah. Padam pemboleh ubah ANTHROPIC_API_KEY di Netlify supaya Netlify AI Gateway digunakan secara automatik, kemudian deploy semula.');
+    if (res.status === 402 || res.status === 429) return { ...basic, engine: 'asas', note: 'Kredit AI Netlify habis atau had seminit dicapai — draf asas disediakan. Cuba lagi sebentar.' };
     return { ...basic, engine: 'asas', note: `AI memulangkan ralat (${msg}). Draf asas disediakan.` };
   }
   const text = (data.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('');
